@@ -5,163 +5,58 @@
 <title>h y p o c r i t e l e c t e u r</title>
 
 <style>
-  body {
-    margin: 0;
-    height: 100vh;
-    background: #ffffff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: Georgia, "Times New Roman", serif;
-  }
-
-  #container {
-    width: 700px;
-    height: 700px;
-    border: 1px solid #000;
-    position: relative;
-    background: #ffffff;
-    touch-action: none; /* blocca scroll/zoom */
-  }
-
-  #field {
-    position: absolute;
-    top: 100px;
-    left: 100px;
-    width: 500px;
-    height: 500px;
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(3, 1fr);
-    align-items: center;
-    justify-items: center;
-    pointer-events: none;
-  }
-
-  .word {
-    font-size: 16px;
-    color: #000;
-    white-space: nowrap;
-  }
-
-  #cursor {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border: 2px solid #000;
-    border-radius: 50%;
-    background: transparent;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-  }
-</style>
-</head>
-
-<body>
-
-<div id="container">
-  <div id="field"></div>
-  <div id="cursor"></div>
-</div>
-
-<script>
-const phrase = "for the reader if they enjoy the game these words are not accessible but for the eyes only";
-const words = phrase.split(" ");
-
-const field = document.getElementById("field");
-const container = document.getElementById("container");
-const cursor = document.getElementById("cursor");
-
-words.forEach(word => {
-  const span = document.createElement("span");
-  span.className = "word";
-  span.textContent = word;
-  field.appendChild(span);
-});
-
-function getFieldRect() {
-  return field.getBoundingClientRect();
+body {
+  margin: 0;
+  height: 100vh;
+  background: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Georgia, "Times New Roman", serif;
 }
 
-function jitter(min, max) {
-  return Math.random() * (max - min) + min;
+#container {
+  width: 700px;
+  height: 700px;
+  border: 1px solid #000;
+  position: relative;
+  background: #ffffff;
 }
 
-function updateCursor(clientX, clientY) {
-  const rect = container.getBoundingClientRect();
-  let x = clientX - rect.left;
-  let y = clientY - rect.top;
-
-  const f = getFieldRect();
-  const fx1 = f.left - rect.left;
-  const fy1 = f.top - rect.top;
-  const fx2 = fx1 + f.width;
-  const fy2 = fy1 + f.height;
-
-  const margin = 20;
-
-  if (x > fx1 - margin && x < fx2 + margin &&
-      y > fy1 - margin && y < fy2 + margin) {
-
-    const distLeft = Math.abs(x - fx1);
-    const distRight = Math.abs(x - fx2);
-    const distTop = Math.abs(y - fy1);
-    const distBottom = Math.abs(y - fy2);
-
-    const minDist = Math.min(distLeft, distRight, distTop, distBottom);
-
-    if (minDist === distLeft) {
-      x = fx1 - jitter(5, 15);
-      y += jitter(-10, 10);
-    } else if (minDist === distRight) {
-      x = fx2 + jitter(5, 15);
-      y += jitter(-10, 10);
-    } else if (minDist === distTop) {
-      y = fy1 - jitter(5, 15);
-      x += jitter(-10, 10);
-    } else {
-      y = fy2 + jitter(5, 15);
-      x += jitter(-10, 10);
-    }
-  }
-
-  cursor.style.left = x + "px";
-  cursor.style.top = y + "px";
+#field {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 500px;
+  height: 500px;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  align-items: center;
+  justify-items: center;
+  pointer-events: none;
 }
 
-// attivazione esplicita su touch/mouse
-container.addEventListener("pointerdown", (e) => {
-  container.setPointerCapture(e.pointerId);
-  updateCursor(e.clientX, e.clientY);
-});
-
-container.addEventListener("pointermove", (e) => {
-  updateCursor(e.clientX, e.clientY);
-});
-</script>
-
-</body>
-</html>  }
-
-  .word {
-    font-size: 16px;
-    color: #000;
-    white-space: nowrap;
-  }
+.word {
+  font-size: 16px;
+  color: #000;
+  white-space: nowrap;
+}
 
 #cursor {
   position: absolute;
   width: 10px;
   height: 10px;
-  border: 2px solid #000; /* bordo nero */
-  border-radius: 90%;     /* cerchio */
-  background: transparent; /* pallino vuoto */
+  border: 2px solid #000;
+  border-radius: 90%;
+  background: transparent;
   pointer-events: none;
   transform: translate(-50%, -50%);
 }
-
 </style>
+
 </head>
+
 <body>
 
 <div id="container">
@@ -177,6 +72,7 @@ const field = document.getElementById("field");
 const container = document.getElementById("container");
 const cursor = document.getElementById("cursor");
 
+/* --- render words --- */
 words.forEach(word => {
   const span = document.createElement("span");
   span.className = "word";
@@ -184,124 +80,25 @@ words.forEach(word => {
   field.appendChild(span);
 });
 
+/* --- utilities --- */
 function getFieldRect() {
   return field.getBoundingClientRect();
 }
 
 // jitter leggero
 function jitter(min, max) {
-  return Math.random() * (max - min)*Math.random()+10;
+  return Math.random() * (max - min) * Math.random() + 10;
 }
 
+/* --- interaction --- */
 container.addEventListener("mousemove", (e) => {
   const rect = container.getBoundingClientRect();
+
   let x = e.clientX - rect.left;
   let y = e.clientY - rect.top;
 
   const f = getFieldRect();
-  const fx1 = f.left - rect.left;
-  const fy1 = f.top - rect.top;
-  const fx2 = fx1 + f.width;
-  const fy2 = fy1 + f.height;
 
-  const margin = 20; // distanza minima dal bordo del testo
-
-  // se il cursore entra nella zona del campo allargato, "sposta" il pallino sul perimetro
-  if (x > fx1 - margin && x < fx2 + margin &&
-      y > fy1 - margin && y < fy2 + margin) {
-
-    // determina se il mouse è più vicino a un bordo orizzontale o verticale
-    const distLeft = Math.abs(x - fx1);
-    const distRight = Math.abs(x - fx2);
-    const distTop = Math.abs(y - fy1);
-    const distBottom = Math.abs(y - fy2);
-
-    const minDist = Math.min(distLeft, distRight, distTop, distBottom);
-
-    if (minDist === distLeft) {
-      x = fx1 - jitter(5, 15);
-      y += jitter(-10, 10);
-    } else if (minDist === distRight) {
-      x = fx2 + jitter(5, 15);
-      y += jitter(-10, 10);
-    } else if (minDist === distTop) {
-      y = fy1 - jitter(5, 15);
-      x += jitter(-10, 10);
-    } else { // distBottom
-      y = fy2 + jitter(5, 15);
-      x += jitter(-10, 10);
-    }
-  }
-
-  cursor.style.left = x + "px";
-  cursor.style.top = y + "px";
-});
-</script>
-
-
-
-</body>
-</html>
-    justify-items: center;
-    pointer-events: none;
-  }
-
-  .word {
-    font-size: 16px;
-    color: #000;
-    white-space: nowrap;
-  }
-
-  #cursor {
-    position: absolute;
-    width: 10px;
-    height: 10px;
-    border: 2px solid #000;
-    border-radius: 50%;
-    background: transparent;
-    pointer-events: none;
-    transform: translate(-50%, -50%);
-  }
-</style>
-</head>
-
-<body>
-
-<div id="container">
-  <div id="field"></div>
-  <div id="cursor"></div>
-</div>
-
-<script>
-const phrase = "for the reader if they enjoy the game these words are not accessible but for the eyes only";
-const words = phrase.split(" ");
-
-const field = document.getElementById("field");
-const container = document.getElementById("container");
-const cursor = document.getElementById("cursor");
-
-words.forEach(word => {
-  const span = document.createElement("span");
-  span.className = "word";
-  span.textContent = word;
-  field.appendChild(span);
-});
-
-function getFieldRect() {
-  return field.getBoundingClientRect();
-}
-
-// jitter leggero
-function jitter(min, max) {
-  return Math.random() * (max - min) + min;
-}
-
-container.addEventListener("pointermove", (e) => {
-  const rect = container.getBoundingClientRect();
-  let x = e.clientX - rect.left;
-  let y = e.clientY - rect.top;
-
-  const f = getFieldRect();
   const fx1 = f.left - rect.left;
   const fy1 = f.top - rect.top;
   const fx2 = fx1 + f.width;
@@ -309,9 +106,11 @@ container.addEventListener("pointermove", (e) => {
 
   const margin = 20;
 
-  if (x > fx1 - margin && x < fx2 + margin &&
-      y > fy1 - margin && y < fy2 + margin) {
-
+  // zona estesa attorno al campo
+  if (
+    x > fx1 - margin && x < fx2 + margin &&
+    y > fy1 - margin && y < fy2 + margin
+  ) {
     const distLeft = Math.abs(x - fx1);
     const distRight = Math.abs(x - fx2);
     const distTop = Math.abs(y - fy1);
@@ -338,106 +137,6 @@ container.addEventListener("pointermove", (e) => {
   cursor.style.top = y + "px";
 });
 </script>
-
-</body>
-</html>  }
-
-  .word {
-    font-size: 16px;
-    color: #000;
-    white-space: nowrap;
-  }
-
-#cursor {
-  position: absolute;
-  width: 10px;
-  height: 10px;
-  border: 2px solid #000; /* bordo nero */
-  border-radius: 90%;     /* cerchio */
-  background: transparent; /* pallino vuoto */
-  pointer-events: none;
-  transform: translate(-50%, -50%);
-}
-
-</style>
-</head>
-<body>
-
-<div id="container">
-  <div id="field"></div>
-  <div id="cursor"></div>
-</div>
-
-<script>
-const phrase = "for the reader if they enjoy the game these words are not accessible but for the eyes only";
-const words = phrase.split(" ");
-
-const field = document.getElementById("field");
-const container = document.getElementById("container");
-const cursor = document.getElementById("cursor");
-
-words.forEach(word => {
-  const span = document.createElement("span");
-  span.className = "word";
-  span.textContent = word;
-  field.appendChild(span);
-});
-
-function getFieldRect() {
-  return field.getBoundingClientRect();
-}
-
-// jitter leggero
-function jitter(min, max) {
-  return Math.random() * (max - min)*Math.random()+10;
-}
-
-container.addEventListener("mousemove", (e) => {
-  const rect = container.getBoundingClientRect();
-  let x = e.clientX - rect.left;
-  let y = e.clientY - rect.top;
-
-  const f = getFieldRect();
-  const fx1 = f.left - rect.left;
-  const fy1 = f.top - rect.top;
-  const fx2 = fx1 + f.width;
-  const fy2 = fy1 + f.height;
-
-  const margin = 20; // distanza minima dal bordo del testo
-
-  // se il cursore entra nella zona del campo allargato, "sposta" il pallino sul perimetro
-  if (x > fx1 - margin && x < fx2 + margin &&
-      y > fy1 - margin && y < fy2 + margin) {
-
-    // determina se il mouse è più vicino a un bordo orizzontale o verticale
-    const distLeft = Math.abs(x - fx1);
-    const distRight = Math.abs(x - fx2);
-    const distTop = Math.abs(y - fy1);
-    const distBottom = Math.abs(y - fy2);
-
-    const minDist = Math.min(distLeft, distRight, distTop, distBottom);
-
-    if (minDist === distLeft) {
-      x = fx1 - jitter(5, 15);
-      y += jitter(-10, 10);
-    } else if (minDist === distRight) {
-      x = fx2 + jitter(5, 15);
-      y += jitter(-10, 10);
-    } else if (minDist === distTop) {
-      y = fy1 - jitter(5, 15);
-      x += jitter(-10, 10);
-    } else { // distBottom
-      y = fy2 + jitter(5, 15);
-      x += jitter(-10, 10);
-    }
-  }
-
-  cursor.style.left = x + "px";
-  cursor.style.top = y + "px";
-});
-</script>
-
-
 
 </body>
 </html>
