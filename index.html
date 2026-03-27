@@ -21,6 +21,7 @@ body {
   border: 1px solid #000;
   position: relative;
   background: #ffffff;
+  touch-action: none;
 }
 
 #field {
@@ -85,13 +86,13 @@ function getFieldRect() {
   return field.getBoundingClientRect();
 }
 
-// jitter leggero
+// jitter
 function jitter(min, max) {
-  return Math.random() * (max - min) * Math.random() + 10;
+  return Math.random() * (max - min) + min;
 }
 
 /* --- interaction --- */
-container.addEventListener("mousemove", (e) => {
+container.addEventListener("pointermove", (e) => {
   const rect = container.getBoundingClientRect();
 
   let x = e.clientX - rect.left;
@@ -106,7 +107,6 @@ container.addEventListener("mousemove", (e) => {
 
   const margin = 20;
 
-  // zona estesa attorno al campo
   if (
     x > fx1 - margin && x < fx2 + margin &&
     y > fy1 - margin && y < fy2 + margin
