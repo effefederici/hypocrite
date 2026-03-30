@@ -86,17 +86,16 @@ function getFieldRect() {
   return field.getBoundingClientRect();
 }
 
-// jitter
 function jitter(min, max) {
   return Math.random() * (max - min) + min;
 }
 
-/* --- interaction --- */
-container.addEventListener("pointermove", (e) => {
+/* --- CORE POSITION LOGIC --- */
+function computePosition(clientX, clientY){
   const rect = container.getBoundingClientRect();
 
-  let x = e.clientX - rect.left;
-  let y = e.clientY - rect.top;
+  let x = clientX - rect.left;
+  let y = clientY - rect.top;
 
   const f = getFieldRect();
 
@@ -133,9 +132,60 @@ container.addEventListener("pointermove", (e) => {
     }
   }
 
-  cursor.style.left = x + "px";
-  cursor.style.top = y + "px";
-});
+  return {x,y};
+}
+
+/* ===================== DEVICE DETECTION ===================== */
+const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+
+/* ===================== INTERAZIONI ===================== */
+
+if(!isTouchDevice){
+
+  // ===== DESKTOP =====
+  container.addEventListener("pointermove", (e) => {
+    const p = computePosition(e.clientX, e.clientY);
+    cursor.style.left = p.x + "px";
+    cursor.style.top = p.y + "px";
+  });
+
+} else {
+
+  // ===== TABLET / TOUCH =====
+  let isTouching = false;
+
+  container.addEventListener("touchstart", e=>{
+    e.preventDefault();
+    isTouching = true;
+
+    const t = e.touches[0];
+    const p = computePosition(t.clientX, t.clientY);
+    cursor.style.left = p.x + "px";
+    cursor.style.top = p.y + "px";
+
+  }, {passive:false});
+
+  container.addEventListener("touchmove", e=>{
+    e.preventDefault();
+    if(!isTouching) return;
+
+    const t = e.touches[0];
+    const p = computePosition(t.clientX, t.clientY);
+    cursor.style.left = p.x + "px";
+    cursor.style.top = p.y + "px";
+
+  }, {passive:false});
+
+  container.addEventListener("touchend", ()=>{
+    isTouching = false;
+  });
+
+  container.addEventListener("touchcancel", ()=>{
+    isTouching = false;
+  });
+
+}
+
 </script>
 
 </body>
